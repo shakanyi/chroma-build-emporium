@@ -11,12 +11,24 @@ import {
   Cpu,
   Monitor,
   Keyboard,
-  Mouse
+  Mouse,
+  Home,
+  Package,
+  Info,
+  MessageCircle
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Link } from "react-router-dom";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const navigationLinks = [
+    { name: "Home", icon: Home, href: "/" },
+    { name: "Products", icon: Package, href: "/products" },
+    { name: "About", icon: Info, href: "/about" },
+    { name: "Contact", icon: MessageCircle, href: "/contact" },
+  ];
 
   const categories = [
     { name: "PC Builder", icon: Cpu, href: "/pc-builder" },
@@ -32,7 +44,7 @@ const Header = () => {
         {/* Top bar */}
         <div className="flex items-center justify-between py-4">
           {/* Logo */}
-          <div className="flex items-center space-x-2">
+          <Link to="/" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
             <div className="w-10 h-10 bg-gradient-primary rounded-lg flex items-center justify-center animate-glow-pulse">
               <Cpu className="h-6 w-6 text-primary-foreground" />
             </div>
@@ -42,7 +54,7 @@ const Header = () => {
               </h1>
               <p className="text-xs text-muted-foreground">Elite Gaming Store</p>
             </div>
-          </div>
+          </Link>
 
           {/* Search bar - Desktop */}
           <div className="hidden md:flex flex-1 max-w-2xl mx-8">
@@ -81,20 +93,31 @@ const Header = () => {
 
         {/* Navigation - Desktop */}
         <nav className="hidden md:flex items-center space-x-1 pb-4 border-t border-border/50 pt-4">
+          {navigationLinks.map((link) => (
+            <Button
+              key={link.name}
+              variant="ghost"
+              className="flex items-center space-x-2 text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all duration-300 group"
+              asChild
+            >
+              <Link to={link.href}>
+                <link.icon className="h-4 w-4 group-hover:text-primary transition-colors" />
+                <span>{link.name}</span>
+              </Link>
+            </Button>
+          ))}
+          <div className="flex-1" />
           {categories.map((category) => (
             <Button
               key={category.name}
               variant="ghost"
+              size="sm"
               className="flex items-center space-x-2 text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all duration-300 group"
             >
               <category.icon className="h-4 w-4 group-hover:text-primary transition-colors" />
-              <span>{category.name}</span>
+              <span className="hidden lg:inline">{category.name}</span>
             </Button>
           ))}
-          <div className="flex-1" />
-          <Button variant="outline" className="border-primary/50 text-primary hover:bg-primary/10">
-            Build Your PC
-          </Button>
         </nav>
 
         {/* Mobile menu */}
@@ -111,19 +134,32 @@ const Header = () => {
             
             {/* Mobile navigation */}
             <nav className="space-y-2">
-              {categories.map((category) => (
+              {navigationLinks.map((link) => (
                 <Button
-                  key={category.name}
+                  key={link.name}
                   variant="ghost"
                   className="w-full justify-start space-x-2"
+                  asChild
+                  onClick={() => setIsMenuOpen(false)}
                 >
-                  <category.icon className="h-4 w-4" />
-                  <span>{category.name}</span>
+                  <Link to={link.href}>
+                    <link.icon className="h-4 w-4" />
+                    <span>{link.name}</span>
+                  </Link>
                 </Button>
               ))}
-              <Button className="w-full mt-4 bg-gradient-primary hover:opacity-90">
-                Build Your PC
-              </Button>
+              <div className="pt-2 border-t border-border/50 mt-4">
+                {categories.map((category) => (
+                  <Button
+                    key={category.name}
+                    variant="ghost"
+                    className="w-full justify-start space-x-2 text-sm"
+                  >
+                    <category.icon className="h-4 w-4" />
+                    <span>{category.name}</span>
+                  </Button>
+                ))}
+              </div>
             </nav>
           </div>
         )}
